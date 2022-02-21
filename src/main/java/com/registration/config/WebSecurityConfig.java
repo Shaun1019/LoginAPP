@@ -48,8 +48,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {          // for authorization 
         http.authorizeRequests()                                            //this is called method chaining
-            .antMatchers("/users").authenticated()                          //authenticated() is used to make it compulsery for the user login to access this page
-            .anyRequest().permitAll()
+            .antMatchers("/users")                        //authenticated() is used to make it compulsery for the user login to access this page
+            .permitAll()
             .and()                                                      // to end the method chain
             .formLogin().loginPage("/login")                                  //form base log in
              .usernameParameter("email")                                 // we here define the parameter for login is email

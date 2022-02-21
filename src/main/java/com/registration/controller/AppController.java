@@ -20,6 +20,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.registration.TempOTP;
+import com.registration.TempUserDetails;
+import com.registration.UserBean;
 import com.registration.UserOTPRepository;
 import com.registration.UserRepository;
 import com.registration.dto.User;
@@ -43,7 +45,10 @@ public class AppController implements ErrorController{
 	
 	User user1;
 	
-	TempOTP sentotp;
+	@Autowired
+	UserBean tempUser;
+	
+	
 	
 	
 	
@@ -78,16 +83,13 @@ public class AppController implements ErrorController{
 		
 		User obj= repo.findByEmail(username);
 		String dbPassword = obj.getPassword();
-		
+		tempUser.setEmail(username);
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		boolean encodedPassword = encoder.matches(password, dbPassword);
 		if(encodedPassword) {
 //		RedirectView redirectView = new RedirectView();
 //		redirectView.
-		 return "users/"+"?username="+username;
-		 
-	
-		 
+		 return "redirect:/users";
 		}	
 		return "login";
 	}
@@ -116,12 +118,15 @@ public class AppController implements ErrorController{
 	
 	
 	@GetMapping("/users")
-	public String showUserDetails(Model model, @RequestParam("username") String email) {
+	public String showUserDetails(Model model) {
 		
-		 User listUsers = repo.findByEmail(email);
-		    model.addAttribute("listUsers", listUsers);
+		String email = tempUser.getEmail();
+		
+		System.out.println(email);
+	    User listUsers = repo.findByEmail(email);
+	    model.addAttribute("listUsers", listUsers);
 		     
-			    return "users";
+	    return "users";
 	}
 	
 	
