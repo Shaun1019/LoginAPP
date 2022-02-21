@@ -51,9 +51,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/users").authenticated()                          //authenticated() is used to make it compulsery for the user login to access this page
             .anyRequest().permitAll()
             .and()                                                      // to end the method chain
-            .formLogin()                                       //form base log in
+            .formLogin().loginPage("/login")                                  //form base log in
              .usernameParameter("email")                                 // we here define the parameter for login is email
-             .defaultSuccessUrl("/users")
+//             .defaultSuccessUrl("/users")
             .permitAll()
             .and()
             .logout().logoutSuccessUrl("/").permitAll();

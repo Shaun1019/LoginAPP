@@ -4,7 +4,10 @@ package com.registration.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.registration.TempOTP;
 import com.registration.UserOTPRepository;
@@ -40,6 +45,8 @@ public class AppController implements ErrorController{
 	
 	TempOTP sentotp;
 	
+	
+	
 	@GetMapping("")
 	public String viewHomePage() {
 		return "index";
@@ -52,11 +59,37 @@ public class AppController implements ErrorController{
 	}
 	
 	
+	
+	
 	@RequestMapping(path="/login", method = RequestMethod.GET )
 	public String userLogin() {
+		org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		
-		System.out.print("yooo");
+		if(authentication == null || authentication instanceof AnonymousAuthenticationToken) {
+			
+			return "login";
+		}
+		
 		return "users";
+	}
+	
+	@RequestMapping(path="/loginX", method = RequestMethod.POST )
+	public String userLoginX(@RequestParam("email") String username, @RequestParam("password") String password) {
+		
+		User obj= repo.findByEmail(username);
+		String dbPassword = obj.getPassword();
+		
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		boolean encodedPassword = encoder.matches(password, dbPassword);
+		if(encodedPassword) {
+//		RedirectView redirectView = new RedirectView();
+//		redirectView.
+		 return "users/"+"?username="+username;
+		 
+	
+		 
+		}	
+		return "login";
 	}
 	
 	
@@ -76,19 +109,19 @@ public class AppController implements ErrorController{
 	        	 
 	        	return "error_page";
 	        }
-		 
-		 
 		user1=user;
-	    //repo.save(user);
 		return "otp_confirmation";
 	}
 	
 	
 	
 	@GetMapping("/users")
-	public String listUsers(Model model) {
-       
-	    return "users";
+	public String showUserDetails(Model model, @RequestParam("username") String email) {
+		
+		 User listUsers = repo.findByEmail(email);
+		    model.addAttribute("listUsers", listUsers);
+		     
+			    return "users";
 	}
 	
 	
