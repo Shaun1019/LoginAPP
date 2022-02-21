@@ -51,12 +51,14 @@ public class AppController implements ErrorController{
 	
 	
 	
-	
+	//handler to handle our home page with a default url
 	@GetMapping("")
 	public String viewHomePage() {
 		return "index";
 	}
 	
+	
+	//handler to handle send request for a new registration in db
 	@GetMapping("/register")
 	public String showSignUpForm(Model model) {
 		model.addAttribute("user", new User());
@@ -65,7 +67,7 @@ public class AppController implements ErrorController{
 	
 	
 	
-	
+	//for the login protection on user details
 	@RequestMapping(path="/login", method = RequestMethod.GET )
 	public String userLogin() {
 		org.springframework.security.core.Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,6 +80,7 @@ public class AppController implements ErrorController{
 		return "users";
 	}
 	
+	//handler to authenticate the password and pass the username value to the next handler
 	@RequestMapping(path="/loginX", method = RequestMethod.POST )
 	public String userLoginX(@RequestParam("email") String username, @RequestParam("password") String password) {
 		
@@ -87,14 +90,14 @@ public class AppController implements ErrorController{
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 		boolean encodedPassword = encoder.matches(password, dbPassword);
 		if(encodedPassword) {
-//		RedirectView redirectView = new RedirectView();
-//		redirectView.
 		 return "redirect:/users";
 		}	
 		return "login";
 	}
 	
 	
+	
+	//handler to send the otp to the user for the registration process
 	@PostMapping("/process_register")
 	public String processRegistration(User user, SmsService sms) {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -114,7 +117,23 @@ public class AppController implements ErrorController{
 	}
 	
 	
+	//handler to authenticate  the otp
+		@RequestMapping(path="/otp_confirmation", method = RequestMethod.POST )
+		public String UserConfirmation( @RequestParam("otp") String recivedOTP) {
+			
+			UserOTP otp= repoOTP.findByEmail(user1.getEmail());
+			
+			String otpSent= otp.getOtp();
+			
+			if(otpSent.equalsIgnoreCase(recivedOTP)) {
+				repo.save(user1);
+				return "register_sucess";
+			}
+			
+			return "register_unsucessfull";		
+		}
 	
+	//handler to show all the details of user
 	@GetMapping("/users")
 	public String showUserDetails(Model model) {
 		
@@ -127,25 +146,5 @@ public class AppController implements ErrorController{
 	    return "users";
 	}
 	
-	
-	@RequestMapping(path="/otp_confirmation", method = RequestMethod.POST )
-	public String UserConfirmation( @RequestParam("otp") String recivedOTP) {
-		
-		UserOTP otp= repoOTP.findByEmail(user1.getEmail());
-		
-		String otpSent= otp.getOtp();
-		
-		if(otpSent.equalsIgnoreCase(recivedOTP)) {
-			repo.save(user1);
-			return "register_sucess";
-		}
-		
-		return "register_unsucessfull";
-		
-		
-				
-	}
-	
-
 }
 

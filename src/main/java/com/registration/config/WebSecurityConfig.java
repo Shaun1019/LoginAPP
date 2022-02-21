@@ -19,41 +19,40 @@ import com.registration.service.CustomUserDetailsService;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
-    private DataSource dataSource; //can obatian the data source for auth
+    private DataSource dataSource;               
      
     @Bean
     public UserDetailsService userDetailsService() {
         return new CustomUserDetailsService();
     }
      
-    @Bean  //exposes the bean of pasword encoder so that spring security can use it
-    public BCryptPasswordEncoder passwordEncoder() {  //spring security recommends to use Bcrypt password encoder 
+    @Bean                                                                                          //exposes the bean of pasword encoder so that spring security can use it
+    public BCryptPasswordEncoder passwordEncoder() {                                              //spring security recommends to use Bcrypt password encoder 
         return new BCryptPasswordEncoder();
     }
      
     @Bean 
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());                // authnetication provider takes user details as an input
+        authProvider.setUserDetailsService(userDetailsService());                                 // authnetication provider takes user details as an input
         authProvider.setPasswordEncoder(passwordEncoder());
          
         return authProvider;
     }
  
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {    //for authentication  
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {               //for authentication  
         auth.authenticationProvider(authenticationProvider());
     }
  
     @Override
-    protected void configure(HttpSecurity http) throws Exception {          // for authorization 
-        http.authorizeRequests()                                            //this is called method chaining
-            .antMatchers("/users")                        //authenticated() is used to make it compulsery for the user login to access this page
+    protected void configure(HttpSecurity http) throws Exception {                               // for authorization 
+        http.authorizeRequests()                                                                 //this is called method chaining
+            .antMatchers("/users")                                                               //authenticated() is used to make it compulsery for the user login to access this page
             .permitAll()
-            .and()                                                      // to end the method chain
-            .formLogin().loginPage("/login")                                  //form base log in
-             .usernameParameter("email")                                 // we here define the parameter for login is email
-//             .defaultSuccessUrl("/users")
+            .and()                                                                               // to end the method chain
+            .formLogin().loginPage("/login")                                                     //form base log in
+             .usernameParameter("email")                                                         // we here define the parameter for login is email
             .permitAll()
             .and()
             .logout().logoutSuccessUrl("/").permitAll();
