@@ -18,7 +18,7 @@ import com.twilio.type.PhoneNumber;
 public class SmsService {
      private final String ACCOUNT_SID ="ACf4aebee92289d0e2cac166359bf889c9";
 
-    private final String AUTH_TOKEN = "6e23c6cc9e87b59085fa5ab5f6e4b088";
+    private final String AUTH_TOKEN = "8ec5010053bcfc4eea2ce452efb0fb17";
 
     private final String FROM_NUMBER = "+19106598779";
     
@@ -35,11 +35,10 @@ public class SmsService {
         int number=(int)(Math.random()*(max-min+1)+min);
       
         
-        String msg ="Your OTP - "+number+ " please verify this OTP in your Application by Er Prince kumar Technoidentity.com";
+        String msg ="Your OTP - "+number+ " please verify this OTP in your Application by Shaurya";
        
         
-        Message message = Message.creator(new PhoneNumber(sms.getMobileNumber()), new PhoneNumber(FROM_NUMBER), msg)
-                .create();
+        Message message = Message.creator(new PhoneNumber(sms.getMobileNumber()), new PhoneNumber(FROM_NUMBER), msg).create();
        
          
         UserOTP otp = new UserOTP();

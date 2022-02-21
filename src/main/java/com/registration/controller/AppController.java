@@ -107,8 +107,6 @@ public class AppController implements ErrorController{
 	            System.out.println("hello");
 	        }
 	        catch(Exception e){
-
-	        	 
 	        	return "error_page";
 	        }
 		user1=user;
