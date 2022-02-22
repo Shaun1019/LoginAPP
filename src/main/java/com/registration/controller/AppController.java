@@ -52,7 +52,7 @@ public class AppController implements ErrorController{
 	
 	
 	//handler to handle our home page with a default url
-	@GetMapping("")
+	@GetMapping("/application")
 	public String viewHomePage() {
 		return "index";
 	}
